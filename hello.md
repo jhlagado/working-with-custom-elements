@@ -1,4 +1,6 @@
-# Writing with Custom Elements
+### Writing with Custom Elements
+
+![](https://cdn-images-1.medium.com/max/1600/1*hj_oFpaaV6tfhsv_Jt1P_A.png)
 
 [Custom Elements](https://html.spec.whatwg.org/dev/custom-elements.html) are a
 feature of modern browsers which allow you to package and install your
@@ -116,8 +118,8 @@ Remarkably LitHtml really isn’t any more difficult to use than innerHTML.
 
 [See a working version here.](https://codepen.io/jhlagado/pen/jvRbOY)
 
-This code imports two functions from the lit-html module: html and render. The
-`html` function is used to “tag” its associated template literal and make it
+This code imports two functions from the lit-html module: `html` and `render`.
+The `html` function is used to “tag” its associated template literal and make it
 usable by the `render` function. The `render` function takes this literal uses
 it to replace the content of the DOM element specified as its second argument.
 
@@ -258,6 +260,8 @@ DOM to render to.
 
 The resulting HTML in the browser looks like this.
 
+![](https://cdn-images-1.medium.com/max/1600/1*7QFHXjMufZYy9_yZJflVtw.png)
+
 While this is already pretty good, it has the downside of the custom element
 replacing its own content which makes it difficult to pass additional
 information in the body of the custom element.
@@ -313,6 +317,8 @@ Chrome).](https://codepen.io/jhlagado/pen/GXLxGm?editors=1101)
 
 The resulting HTML in the browser looks different to the previous example
 
+![](https://cdn-images-1.medium.com/max/1600/1*ok8m9Y35gSS-tPZuAZOX6A.png)
+
 The first thing to notice is that the element has a child marked `#shadow-root`
 which has all the DOM that will be rendered. The actual body of the custom
 element is not rendered directly but it is referenced by the Shadow DOM using a
@@ -364,6 +370,8 @@ data.
 
 [See a working version here (use
 Chrome).](https://codepen.io/jhlagado/pen/WgWJNa?editors=1101)
+
+![](https://cdn-images-1.medium.com/max/1600/1*TZS6YDK01FqqSS_JsvlF0g.png)
 
 ### Attributes and Properties
 
@@ -485,50 +493,6 @@ The `MyAvatar` component doesn’t need to know that it is being rendered inside
 `Comment`. This is why we have given its prop a more generic name of `user`
 rather than `author`.
 
-We recommend naming props from the component’s own point of view rather than the
-context in which it is being used.
-
-We can now simplify `Comment` a tiny bit:
-
-    class MyComment extends HTMLElement {
-      
-      constructor() { 
-        super();
-        this.attachShadow({mode: 'open'});
-      }
-      
-      connectedCallback() {  
-        this.render();
-      } 
-      
-      render() { 
-        render( 
-          html`
-          <div>
-            <div>
-              <my-avatar .user=${this.author}></my-avatar> 
-              <div>
-                ${this.author.name}
-              </div>
-            </div>
-            <div>
-              <slot></slot> 
-            </div>
-            <div>
-              ${this.date}
-            </div>
-          </div>
-          `, 
-          this.shadowRoot
-        );
-      }
-    }
-      
-    customElements.define('my-comment', MyComment);
-
-[See a working version here (use
-Chrome)](https://codepen.io/jhlagado/pen/xaeJwB?editors=1101)
-
 Next, we will extract a `UserInfo` component that renders an `Avatar` next to
 the user’s name:
 
@@ -557,7 +521,7 @@ the user’s name:
       
     customElements.define('my-user-info', MyUserInfo);
 
-This lets us simplify `Comment` even further:
+This lets us simplify `Comment` 
 
     class MyComment extends HTMLElement {
       
@@ -586,20 +550,3 @@ This lets us simplify `Comment` even further:
 Chrome)](https://codepen.io/jhlagado/pen/LJvBjY?editors=1101)
 
 *This is still a working draft. Stay tuned for more updates.*
-
-* [JavaScript](https://medium.com/tag/javascript?source=post)
-* [Custom Elements](https://medium.com/tag/custom-elements?source=post)
-* [Web Components](https://medium.com/tag/web-components?source=post)
-* [Lithtml](https://medium.com/tag/lit-html?source=post)
-
-From a quick cheer to a standing ovation, clap to show how much you enjoyed this
-story.
-
-### [John Hardy](https://medium.com/@jhlagado)
-
-Developer Lead at Cognizant and based in Melbourne, Australia. Interested in
-front end user interface design for mobile and desktop environments
-
-### [WebNow](https://medium.com/webnow?source=footer_card)
-
-The Web is now
