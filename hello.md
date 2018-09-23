@@ -1,4 +1,4 @@
-### Writing with Custom Elements
+# Writing with Custom Elements
 
 [Custom Elements](https://html.spec.whatwg.org/dev/custom-elements.html) are a
 feature of modern browsers which allow you to package and install your
@@ -10,8 +10,8 @@ For example, say we wanted to create an element that formatted a person’s name
 
     <name-card first-name="John" last-name="Hardy"></name-card>
 
-If the the `name-card` tag was registered with the browser as a custom element
-then the browser could be made to render this as
+If the `name-card` tag was registered with the browser as a custom element then
+the browser could be made to render this as
 
     <table>
       <tr>
@@ -258,8 +258,6 @@ DOM to render to.
 
 The resulting HTML in the browser looks like this.
 
-![](https://cdn-images-1.medium.com/max/1600/1*7QFHXjMufZYy9_yZJflVtw.png)
-
 While this is already pretty good, it has the downside of the custom element
 replacing its own content which makes it difficult to pass additional
 information in the body of the custom element.
@@ -315,8 +313,6 @@ Chrome).](https://codepen.io/jhlagado/pen/GXLxGm?editors=1101)
 
 The resulting HTML in the browser looks different to the previous example
 
-![](https://cdn-images-1.medium.com/max/1600/1*ok8m9Y35gSS-tPZuAZOX6A.png)
-
 The first thing to notice is that the element has a child marked `#shadow-root`
 which has all the DOM that will be rendered. The actual body of the custom
 element is not rendered directly but it is referenced by the Shadow DOM using a
@@ -369,8 +365,6 @@ data.
 [See a working version here (use
 Chrome).](https://codepen.io/jhlagado/pen/WgWJNa?editors=1101)
 
-![](https://cdn-images-1.medium.com/max/1600/1*TZS6YDK01FqqSS_JsvlF0g.png)
-
 ### Attributes and Properties
 
 While slots are a very useful way to pass data to Custom Elements, we two other
@@ -380,6 +374,8 @@ setting properties on the DOM element objects directly.
 ### Observing Attributes
 
 ### Observing Properties
+
+### Handling Events
 
 ### Extracting Custom Elements
 
@@ -589,4 +585,21 @@ This lets us simplify `Comment` even further:
 [See a working version here (use
 Chrome)](https://codepen.io/jhlagado/pen/LJvBjY?editors=1101)
 
-<br> 
+*This is still a working draft. Stay tuned for more updates.*
+
+* [JavaScript](https://medium.com/tag/javascript?source=post)
+* [Custom Elements](https://medium.com/tag/custom-elements?source=post)
+* [Web Components](https://medium.com/tag/web-components?source=post)
+* [Lithtml](https://medium.com/tag/lit-html?source=post)
+
+From a quick cheer to a standing ovation, clap to show how much you enjoyed this
+story.
+
+### [John Hardy](https://medium.com/@jhlagado)
+
+Developer Lead at Cognizant and based in Melbourne, Australia. Interested in
+front end user interface design for mobile and desktop environments
+
+### [WebNow](https://medium.com/webnow?source=footer_card)
+
+The Web is now
