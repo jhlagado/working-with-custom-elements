@@ -10,7 +10,7 @@ For example, say we wanted to create an element that formatted a person’s name
 
     <name-card first-name="John" last-name="Hardy"></name-card>
 
-If the the `name-card` tag was registered with the browser as a Custom Element
+If the the `name-card` tag was registered with the browser as a custom element
 then the browser could be made to render this as
 
     <table>
@@ -33,7 +33,7 @@ entire web pages!
 Because they are registered with the browser itself, Custom Elements do not
 compete with existing libraries and frameworks. In fact they can be used to
 facilitate greater interoperability and code sharing between different
-frameworks. A Custom Element designed for, say, an Angular application could be
+frameworks. A custom element designed for, say, an Angular application could be
 reused in a React web application. The work that went into developing the
 component in one framework can be used without modification in another. The
 facilitates flexibility in web development and also helps defeat the general
@@ -195,13 +195,133 @@ For example, it is perfectly safe to embed user input inside  LitHtml literal:
 
 Returning to the topic of Custom Elements after that long detour into DOM
 manipulation and rendering with literals, let’s talk again about what Custom
-Elements actually bring.
+Elements actually bring to the party.
 
 The examples so far have concentrated on selecting some existing DOM element in
 the HTML page and then replacing its contents by executing some JavaScript. This
 is fine as it goes but what we are really after is a way to build reusable web
 components that exist autonomously on the page, know when to render themselves
 and to respond to browser events with their own behaviours.
+
+Let’s start with a simple example
+
+    <my-element></my-element>
+
+Note that custom elements must have one or more hyphens in their name. Also note
+that custom elements always need a closing tag.
+
+The basic definition of a custom element looks like this.
+
+    class MyElement extends HTMLElement { // 1
+      
+      constructor() { // 3 
+        super();        
+      }
+      
+      connectedCallback() { // 4
+        this.render();
+      } 
+      
+      render() { // 5
+        render( 
+          html`<h1>Hello, world!</h1>`, 
+          this
+        );
+      }
+    }
+    customElements.define('my-element', MyElement); // 2
+
+[See a working version here (use
+Chrome).](https://codepen.io/jhlagado/pen/QVPQWb?editors=1101) 
+
+Custom elements are made using a JavaScript class definition (1) which is
+registered with the browser (2). The class definition must extend one of the
+built in classes of the browser which implements an element. While it is
+possible to extend and inherit the behaviours of built-in element types such as
+HTMLButtonElement, this is currently still a poorly supported feature in
+browsers so all of the examples here will extend from the generic HTMLElement. 
+
+In this basic example, I have provided a `constructor` (3) which currently does
+nothing except call `super()` and attach something called a shadowRoot (4) which
+we will discuss later. 
+
+The class also provides an implementation a custom element life-cycle hook
+called `connectedCallback()` (4) which is called when the element is first added
+to the document. This callback is a good place to initially update the DOM with
+new content. It does this by calling its own method `render()` (4) which in turn
+calls the LitHtml render method passing a LitHtml literal and the element’s own
+DOM to render to.
+
+The resulting HTML in the browser looks like this.
+
+![](https://cdn-images-1.medium.com/max/1600/1*7QFHXjMufZYy9_yZJflVtw.png)
+
+While this is already pretty good, it has the downside of the custom element
+replacing its own content which makes it difficult to pass additional
+information in the body of the custom element.
+
+We can overcome this problem and at the same time unlock even more powerful
+features of Custom Elements by using an additional feature of modern browsers,
+the Shadow DOM.
+
+### Shadow DOM
+
+Any HTML element in the browser can be like a tiny universe of its own by having
+its own Shadow DOM. When an element gets a `shadowRoot` then the browser will
+display that instead of its body. 
+
+The HTML elements inside the element’s Shadow DOM are isolated from the elements
+outside and can be styled and controlled independently. 
+
+The body of the element is now invisible and may be used for other purposes.
+
+For the following custom element which passes a piece of HTML in its body
+content
+
+    <my-shady-element>
+      <i>Hello</i>
+    </my-shady-element>
+
+let’s take a look at a Custom Element definition that can use it. This example
+uses a Shadow DOM.
+
+    class MyShadyElement extends HTMLElement {
+      
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'}); // 1    
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      render() { 
+        render( 
+          html`<h1><slot></slot> world!</h1>`, 
+          this.shadowRoot
+        );
+      }
+    }
+      
+    customElements.define('my-shady-element', MyShadyElement);
+
+[See a working version here (use
+Chrome).](https://codepen.io/jhlagado/pen/GXLxGm?editors=1101)
+
+The resulting HTML in the browser looks different to the previous example
+
+![](https://cdn-images-1.medium.com/max/1600/1*ok8m9Y35gSS-tPZuAZOX6A.png)
+
+<br> 
+
+<br> 
+
+<br> 
+
+<br> 
+
+<br> 
 
 ### Components and Props
 
@@ -213,6 +333,8 @@ here](https://reactjs.org/docs/react-component.html).
 Conceptually, components are like JavaScript functions. They accept arbitrary
 inputs (called “props”) and return React elements describing what should appear
 on the screen.
+
+<br> 
 
 ### Functional and Class Components
 
