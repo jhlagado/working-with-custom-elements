@@ -19,10 +19,8 @@ then the browser could be made to render this as
         <th>Last Name</th>
       </tr>
       <tr>
-        <td>
-    </td>
-        <td>
-    </td>
+        <td>John</td>
+        <td>Hardy</td>
       <tr>
     </table>
 
@@ -127,7 +125,7 @@ The main difference here is that if nothing changes, no work gets done. For
 example, if the value of the greeting variable has not been altered, then
 multiple calls to the render function will not change the DOM. If the greeting
 variable does change then only the parts of the DOM that are affected by it will
-be altered. 
+be altered.
 
 This gives us all the benefits of clarity and declarative style of using
 innerHTML to update the DOM but without the destructiveness and inefficiency
@@ -136,7 +134,7 @@ without bringing in the overhead of a Virtual DOM system.
 
 To demonstrate this last point, let’s set up an example that calls `render`
 function multiple times (for the sake of brevity, I’ll leave out the `import`
-statement from the previous example). 
+statement from the previous example).
 
 To show that the render function is being called multiple times, let’s add a
 timestamp.
@@ -174,6 +172,13 @@ This means that you can use them inside `if` statements and `for` loops, assign
 them to variables, accept them as arguments, and return them from functions:
 
 
+LitHtml literals can be nested within other LitHtml literals.
+
+For example, we can create an `App` component that renders `Welcome` many times:
+
+
+
+
 You can also use dollar brace syntax to embed JavaScript expressions inside HTML
 attributes:
 
@@ -186,10 +191,9 @@ Everything is converted to a string before being rendered. This helps prevent
 [XSS (cross-site-scripting)](https://en.wikipedia.org/wiki/Cross-site_scripting)
 attacks.
 
-For example, it is perfectly safe to embed user input inside  LitHtml literal:
+For example, it is perfectly safe to embed user input inside LitHtml literal:
 
 
-     
 
 ### Back to Custom Elements
 
@@ -232,18 +236,18 @@ The basic definition of a custom element looks like this.
     customElements.define('my-element', MyElement); // 2
 
 [See a working version here (use
-Chrome).](https://codepen.io/jhlagado/pen/QVPQWb?editors=1101) 
+Chrome).](https://codepen.io/jhlagado/pen/QVPQWb?editors=1101)
 
 Custom elements are made using a JavaScript class definition (1) which is
 registered with the browser (2). The class definition must extend one of the
 built in classes of the browser which implements an element. While it is
 possible to extend and inherit the behaviours of built-in element types such as
 HTMLButtonElement, this is currently still a poorly supported feature in
-browsers so all of the examples here will extend from the generic HTMLElement. 
+browsers so all of the examples here will extend from the generic HTMLElement.
 
 In this basic example, I have provided a `constructor` (3) which currently does
 nothing except call `super()` and attach something called a shadowRoot (4) which
-we will discuss later. 
+we will discuss later.
 
 The class also provides an implementation a custom element life-cycle hook
 called `connectedCallback()` (4) which is called when the element is first added
@@ -268,10 +272,10 @@ the Shadow DOM.
 
 Any HTML element in the browser can be like a tiny universe of its own by having
 its own Shadow DOM. When an element gets a `shadowRoot` then the browser will
-display that instead of its body. 
+display that instead of its body.
 
 The HTML elements inside the element’s Shadow DOM are isolated from the elements
-outside and can be styled and controlled independently. 
+outside and can be styled and controlled independently.
 
 The body of the element is now invisible and may be used for other purposes.
 
@@ -313,199 +317,276 @@ The resulting HTML in the browser looks different to the previous example
 
 ![](https://cdn-images-1.medium.com/max/1600/1*ok8m9Y35gSS-tPZuAZOX6A.png)
 
-<br> 
+The first thing to notice is that the element has a child marked `#shadow-root`
+which has all the DOM that will be rendered. The actual body of the custom
+element is not rendered directly but it is referenced by the Shadow DOM using a
+special tag called `<slot>`.
 
-<br> 
+You can think about slot as a kind of symbolic link. You can use slots to import
+content from the body of the custom element. If you have several items that you
+want to import from the body you can use **named slots**.
 
-<br> 
+In the following custom element we are passing information through three slots:
+the default one, a named one called first-name and a second one called
+last-name.
 
-<br> 
+    <my-shadier-element>
+      <i>Hello</i>
+      <span slot="first-name">John</span>
+      <span slot="last-name">Hardy</span>
+    </my-shadier-element>
 
-<br> 
+In the render method we slot elements to reference these items of passed in
+data.
 
-### Components and Props
+    class MyShadierElement extends HTMLElement {
+      
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'}); // 1    
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      render() { 
+        render( 
+          html`
+          <h1>
+            <slot></slot> 
+            <slot name="first-name"></slot> 
+            <slot name="last-name"></slot> 
+          </h1>
+          `, 
+          this.shadowRoot
+        );
+      }
+    }
+      
+    customElements.define('my-shadier-element', MyShadierElement);
 
-Components let you split the UI into independent, reusable pieces, and think
-about each piece in isolation. This page provides an introduction to the idea of
-components. You can find a [detailed component API reference
-here](https://reactjs.org/docs/react-component.html).
+[See a working version here (use
+Chrome).](https://codepen.io/jhlagado/pen/WgWJNa?editors=1101)
 
-Conceptually, components are like JavaScript functions. They accept arbitrary
-inputs (called “props”) and return React elements describing what should appear
-on the screen.
+![](https://cdn-images-1.medium.com/max/1600/1*TZS6YDK01FqqSS_JsvlF0g.png)
 
-<br> 
+### Attributes and Properties
 
-### Functional and Class Components
+While slots are a very useful way to pass data to Custom Elements, we two other
+ways at our disposal: passing values as attribute values through the DOM and
+setting properties on the DOM element objects directly.
 
-### <br> 
+### Observing Attributes
 
-The simplest way to define a component is to write a JavaScript function:
+### Observing Properties
 
+### Extracting Custom Elements
 
+Custom elements can be decomposed into smaller components. This aids readability
+and reuse.
 
-This function is a valid React component because it accepts a single “props”
-(which stands for properties) object argument with data and returns a React
-element. We call such components “functional” because they are literally
-JavaScript functions.
+For example, given this `Comment` component rendered from a LitHtml literal:
 
-You can also use an [ES6
-class](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Classes)
-to define a component:
+    const author = {
+      name: 'John Hardy',
+      avatar: '
+    '
+    };
 
-
-
-The above two components are equivalent from React’s point of view.
-
-Classes have some additional features that we will discuss in the [next
-sections](https://reactjs.org/docs/state-and-lifecycle.html). Until then, we
-will use functional components for their conciseness.
-
-### Rendering a Component
-
-### <br> 
-
-Previously, we only encountered React elements that represent DOM tags:
-
-
-
-However, elements can also represent user-defined components:
-
-
-
-When React sees an element representing a user-defined component, it passes JSX
-attributes to this component as a single object. We call this object “props”.
-
-For example, this code renders “Hello, Sara” on the page:
-
-
-
-
-[Try it on
-CodePen](https://reactjs.org/redirect-to-codepen/components-and-props/rendering-a-component)
-
-Let’s recap what happens in this example:
-
-1.  We call `ReactDOM.render()` with the `<Welcome name="Sara" />` element.
-1.  React calls the `Welcome` component with `{name: 'Sara'}` as the props.
-1.  Our `Welcome` component returns a `<h1>Hello, Sara</h1>` element as the result.
-1.  React DOM efficiently updates the DOM to match `<h1>Hello, Sara</h1>`.
-
-> **Note:*** Always start component names with a capital letter.*
-
-> *React treats components starting with lowercase letters as DOM tags. For
-> example, *`<div />`*represents an HTML div tag, but *`<Welcome />`* represents a
-component and requires *`Welcome`* to be in scope.*
-
-> *You can read more about the reasoning behind this convention
-> *[here.](https://reactjs.org/docs/jsx-in-depth.html#user-defined-components-must-be-capitalized)
-
-> <br> 
-
-> <br> 
-
-### Composing Components
-
-### <br> 
-
-Components can refer to other components in their output. This lets us use the
-same component abstraction for any level of detail. A button, a form, a dialog,
-a screen: in React apps, all those are commonly expressed as components.
-
-For example, we can create an `App` component that renders `Welcome` many times:
+    const date = new Date();
+    const text = html`
+        <p>
+          Hello, this is my comment.
+        </p>
+    `;
+      
+    const literal = html`
+      <my-comment .author=${author} .date=${date}>
+        ${text}
+      </my-comment>
+    `;
 
 
+And this definition
 
+    class MyComment extends HTMLElement {
+      
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'});
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      render() { 
+        render( 
+          html`
+          <div className="Comment">
+            <div className="UserInfo">
+              <img className="Avatar"
+                src=${this.author.avatar}
+                alt=${this.author.name}
+              />
+              <div className="UserInfo-name">
+                ${this.author.name}
+              </div>
+            </div>
+            <div className="Comment-text">
+              <slot></slot>
+            </div>
+            <div className="Comment-date">
+              ${this.date}
+            </div>
+          </div>
+          `, 
+          this.shadowRoot 
+        );
+      }
+    }
+      
+    customElements.define('my-comment', MyComment);
 
+[See a working version here (use
+Chrome)](https://codepen.io/jhlagado/pen/QVPxqK?editors=1101)
 
-[Try it on
-CodePen](https://reactjs.org/redirect-to-codepen/components-and-props/composing-components)
+This custom element accepts `author` (an object), `date` (a date) as props and
+text is its content body.
 
-Typically, new React apps have a single `App` component at the very top.
-However, if you integrate React into an existing app, you might start bottom-up
-with a small component like `Button` and gradually work your way to the top of
-the view hierarchy.
+The render method of this custom element is rather long and hard to read. It
+probably should be decomposed into smaller more reusable components.
 
-### Extracting Components
+First, we will extract `MyAvatar`:
 
-### <br> 
+    class MyAvatar extends HTMLElement {
+      
+      constructor() { 
+        super();
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      render() { 
+        render( 
+          html`
+            <img 
+              src=${this.user.avatar}
+              alt=${this.user.name}
+            />
+          `, 
+          this
+        );
+      }
+    }
+      
+    customElements.define('my-avatar', MyAvatar);
 
-Don’t be afraid to split components into smaller components.
-
-For example, consider this `Comment` component:
-
-
-
-[Try it on
-CodePen](https://reactjs.org/redirect-to-codepen/components-and-props/extracting-components)
-
-It accepts `author` (an object), `text` (a string), and `date` (a date) as
-props, and describes a comment on a social media website.
-
-This component can be tricky to change because of all the nesting, and it is
-also hard to reuse individual parts of it. Let’s extract a few components from
-it.
-
-First, we will extract `Avatar`:
-
-
-
-The `Avatar` doesn’t need to know that it is being rendered inside a `Comment`.
-This is why we have given its prop a more generic name: `user` rather than
-`author`.
+The `MyAvatar` component doesn’t need to know that it is being rendered inside a
+`Comment`. This is why we have given its prop a more generic name of `user`
+rather than `author`.
 
 We recommend naming props from the component’s own point of view rather than the
 context in which it is being used.
 
 We can now simplify `Comment` a tiny bit:
 
+    class MyComment extends HTMLElement {
+      
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'});
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      render() { 
+        render( 
+          html`
+          <div>
+            <div>
+              <my-avatar .user=${this.author}></my-avatar> 
+              <div>
+                ${this.author.name}
+              </div>
+            </div>
+            <div>
+              <slot></slot> 
+            </div>
+            <div>
+              ${this.date}
+            </div>
+          </div>
+          `, 
+          this.shadowRoot
+        );
+      }
+    }
+      
+    customElements.define('my-comment', MyComment);
 
+[See a working version here (use
+Chrome)](https://codepen.io/jhlagado/pen/xaeJwB?editors=1101)
 
 Next, we will extract a `UserInfo` component that renders an `Avatar` next to
 the user’s name:
 
-
+    class MyUserInfo extends HTMLElement {
+      
+      constructor() { 
+        super();
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      render() { 
+        render( 
+          html`
+              <my-avatar .user=${this.user}></my-avatar> 
+              <div>
+                ${this.user.name}
+              </div>
+          `, 
+          this
+        );
+      }
+    }
+      
+    customElements.define('my-user-info', MyUserInfo);
 
 This lets us simplify `Comment` even further:
 
+    class MyComment extends HTMLElement {
+      
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'});
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      render() { 
+        render( 
+          html`
+               
+          `, 
+          this.shadowRoot
+        );
+      }
+    }
+      
+    customElements.define('my-comment', MyComment);
 
-
-[Try it on
-CodePen](https://reactjs.org/redirect-to-codepen/components-and-props/extracting-components-continued)
-
-Extracting components might seem like grunt work at first, but having a palette
-of reusable components pays off in larger apps. A good rule of thumb is that if
-a part of your UI is used several times (`Button`, `Panel`, `Avatar`), or is
-complex enough on its own (`App`, `FeedStory`, `Comment`), it is a good
-candidate to be a reusable component.
-
-### Props are Read-Only
-
-### <br> 
-
-Whether you declare a component [as a function or a
-class](https://reactjs.org/docs/components-and-props.html#functional-and-class-components),
-it must never modify its own props. Consider this `sum` function:
-
-
-
-Such functions are called [“pure”](https://en.wikipedia.org/wiki/Pure_function)
-because they do not attempt to change their inputs, and always return the same
-result for the same inputs.
-
-In contrast, this function is impure because it changes its own input:
-
-
-
-React is pretty flexible but it has a single strict rule:
-
-**All React components must act like pure functions with respect to their
-props.**
-
-Of course, application UIs are dynamic and change over time. In the [next
-section](https://reactjs.org/docs/state-and-lifecycle.html), we will introduce a
-new concept of “state”. State allows React components to change their output
-over time in response to user actions, network responses, and anything else,
-without violating this rule.
+[See a working version here (use
+Chrome)](https://codepen.io/jhlagado/pen/LJvBjY?editors=1101)
 
 <br> 
