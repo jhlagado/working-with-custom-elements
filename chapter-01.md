@@ -54,7 +54,7 @@ Running this code will display a heading with the words “Hello, world!” on t
 
     document.getElementById('root').innerHTML = string;
 
-Even better than a conventional JavaScript string is a [**template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) **which allows you to express text that can run over multiple lines. Note the use of `back-ticks` rather that ‘single’ or “double” quotes to delimit the template literal.
+Even better than a conventional JavaScript string is a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) which allows you to express text that can run over multiple lines. Note the use of `back-ticks` rather that ‘single’ or “double” quotes to delimit the template literal.
 
     const template = `
       <h1>
@@ -193,11 +193,11 @@ You can also use dollar brace syntax to embed JavaScript expressions inside HTML
 
 If the attribute is a **boolean attribute**, for example the disabled attribute on a button element, LitHtml has a special syntax to allow you to assign from a JavaScript boolean expression. The ? attribute prefix enforces the following behaviour: if the expression is true then the attribute gets added to the element, if the expression is false then the attribute gets removed.
 
-    const literal = html`<input type="checkbox" **?checked=${checked}**>`
+    const literal = html`<input type="checkbox" ?checked=${checked}>`
 
 LitHtml enables you to assign expressions not only to attributes but also **properties** on the DOM element itself. For this LitHtml uses another special syntax. The . attribute prefix assigns the value of the expression not to an attribute but to a property on the DOM element itself.
 
-    const literal = html`<input **.value=${value}**>`;
+    const literal = html`<input .value=${value}>`;
 
 LitHtml also allows you to attach error handlers using yet another attribute prefix. The @ attribute prefix attaches a function expression as an event handler. The type of the event (e.g. click) is the name of the event handler attribute.
 
