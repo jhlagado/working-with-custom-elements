@@ -1,4 +1,4 @@
-## Working with the DOM
+# Chapter 1 - Working with the DOM
 
 Before we get too deeply into Custom Elements themselves, I’d like to first talk a little about updating the DOM using JavaScript. The browser gives us an entire API for doing this. For example, say we want to attach an h1 element containing the text “Hello, world!” to an element with an id of ”root”.
 
