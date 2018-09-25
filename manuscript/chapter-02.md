@@ -44,7 +44,7 @@ Note: unlike React components the render() method has no special meaning. Decidi
 
 The resulting HTML in the browser looks like this.
 
-![](https://cdn-images-1.medium.com/max/2000/1*7QFHXjMufZYy9_yZJflVtw.png)
+![A custom element with no shadow DOM](images/ch2-ce-no-shadow.png)
 
 While this is already pretty good, it has the downside of the custom element replacing its own body content. This makes it difficult to pass additional information in the body of the custom element.
 
@@ -97,7 +97,7 @@ When this component gets constructed, it calls its inherited method attachShadow
 
 The resulting HTML in the browser looks a bit different to the previous example
 
-![](https://cdn-images-1.medium.com/max/2000/1*ok8m9Y35gSS-tPZuAZOX6A.png)
+![A custom element with a shadow DOM](images/ch2-ce-no-shadow.png)
 
 The first thing to notice is that the element has a child marked #shadow-root which contains all the DOM that will be rendered. The actual body of the custom element is not rendered directly but it gets referenced by the Shadow DOM using a special tag called slot.
 
@@ -142,7 +142,7 @@ In the render method we use slot elements to reference these items of passed in 
 
 [See a working version here (use Chrome).](https://codepen.io/jhlagado/pen/WgWJNa?editors=1101)
 
-![](https://cdn-images-1.medium.com/max/2060/1*TZS6YDK01FqqSS_JsvlF0g.png)
+![A custom element with slots](images/ch2-ce-with-slots.png)
 
 ## Refactoring Custom Elements
 
