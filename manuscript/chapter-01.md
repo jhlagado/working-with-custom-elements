@@ -104,7 +104,7 @@ To show that the render function is being called multiple times, let’s add a t
 
 You can see that only the DOM associated with the expression ${new Date().toLocaleTimeString()} is being updated.
 
-![](https://cdn-images-1.medium.com/max/2000/1*ZazICqefkknioGVUCo4NJg.gif)
+![We only update the parts of the DOM that need changing](images/ch1-dom-changes.gif)
 
 ## Expressions in Literals
 
