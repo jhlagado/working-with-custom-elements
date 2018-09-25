@@ -140,7 +140,7 @@ You can see that only the DOM associated with the expression ${new Date().toLoca
 
 The dollar brace ${} syntax allows you to put any valid [JavaScript expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#Expressions) inside a template literal. For example, 2 + 3, user.firstName, or formatName(user) are all valid JavaScript expressions which can be used for [expression interpolation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Expression_interpolation).
 
-In the example below, we embed the result of calling a JavaScript function, formatName(user) into an <h1> element.
+In the example below, we embed the result of calling a JavaScript function, formatName(user) into an h1 element.
 
     function formatName(user) {
       return user.firstName + ' ' + user.lastName;
@@ -288,7 +288,7 @@ Let’s now turn to the component’s definition and see how we can use a Shadow
       
       constructor() { 
         super();
-        **this.attachShadow({mode: 'open'});**   
+        this.attachShadow({mode: 'open'});   
       }
       
       connectedCallback() {  
