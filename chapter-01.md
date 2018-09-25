@@ -387,7 +387,7 @@ For example, consider this my-comment component which could be used to represent
               <img className="Avatar"
                 src=${this.author.avatar}
                 alt=${this.author.name}
-              />
+              >
               <div>
                 ${this.author.name}
               </div>
@@ -454,7 +454,7 @@ Let’s start by extracting the my-avatar component
             <img 
               src=${this.user.avatar}
               alt=${this.user.name}
-            />
+            >
           `, 
           this
         );
@@ -531,9 +531,9 @@ Now let’s us simplify my-comment
 
 ## Handling Events
 
-LitHtml provides is with a way to add event handlers to your markup. Events can be built-in ones such as click and focus or they can be custom events. An event handler is usually a function that is called when the element receives an event of a certain type.
+LitHtml provides us with a way to add event handlers to your markup. Events can be the built-in ones such as click and focus or they can be custom events. An event handler is a function that is called when the element receives an event of a certain type.
 
-To demonstrate event handling, we’ll create a my-counter component which has three buttons up and down and reset.
+To demonstrate event handling, we’ll create a my-counter component which contains three buttons up and down and reset. These buttons will change the value of a counter property.
 
     class MyCounter extends HTMLElement {
       
@@ -557,7 +557,7 @@ To demonstrate event handling, we’ll create a my-counter component which has t
         this.render();
       }
 
-    resetClick() {
+      resetClick() {
         this.counter = 0;
         this.render();
       }
@@ -618,15 +618,15 @@ This is usually enough information but in the case of boolean attributes we migh
 
 ## Observing Properties
 
-Attributes are very limited in what they can pass to a custom component, they can communicate their presence or absence from an element, they can also communicate a simple string value which the the element is free to interpret as it likes. Often though, this is not enough and often we need to pass more complex data types to our components such as date objects, arrays, sets, maps and dictionaries. To achieve this we need to make use of properties.
+Attributes are very limited in what they can pass to a component. They can communicate their presence or absence from an element and they can also communicate a simple string value. Often though, this is not enough and there are cases in which we need to pass more complex data types to our components. Data types such as dates, arrays, sets, maps and dictionaries etc. To achieve this we need to make use of properties.
 
-Properties are simply the values that we set and get on the DOM element itself (not via attributes) and we can do this by getting access to the element and setting one of it’s properties. What the element chooses to do with the property is up to it.
+Properties are simply the values that we can get and set on the DOM element itself (i.e. not via attributes) and we can do this by getting access to the DOM element and setting one of its properties. What the element chooses to do with this property value is up to it.
 
     const input = document.getElementById('first-name');
 
     input.value = 'John';
 
-As mentioned earlier, properties can be assigned via LitHtml by using the dot prefix to distinguish them from attributes.
+As mentioned earlier, properties can also be assigned via LitHtml by using the dot prefix to distinguish this from an attribute value.
 
     const lastName = 'Hardy';
 
@@ -634,9 +634,9 @@ As mentioned earlier, properties can be assigned via LitHtml by using the dot pr
       <input id="last-name" type="text" .value=${lastName}>
     `;
 
-While Custom Elements provide us with a callback when an attribute changes, with properties we are pretty much on our own. At the same time JavaScript already gives us a powerful way of intercepting property access by using [getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) and [setters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set).
+While Custom Elements provide us with an attributeChangedCallback() when the value of an attribute changes, with properties we are pretty much on our own. That said, JavaScript does already give us some powerful ways of intercepting property accesses with [getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) and [setters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set).
 
-Let’s just start by talking about this utility function observeProperties() which can help us add observability to properties.
+Take a look at this utility function observeProperties() which will help us add observability to our properties.
 
     function observeProperties(object, props) {
       for (let prop of props) {
@@ -680,13 +680,13 @@ Let’s just start by talking about this utility function observeProperties() wh
       }
     }
 
-This function iterates through our array of property names and creates getters and setters for each one. The properties are in effect virtual properties because their actual values are stored in a “private” property with the same name but prefixed with an underscore. For example, a property called value is actually stored in a property called _value but has getters and setter to hide this fact from the outside.
+When you hand this function an element and an array of property names to observe, it iterates through the array creates getters and setters for each property. These properties become in effect “virtual” properties because the public name of the property differs from where it is actually stored. For example, a property with the name value is actually stored in a property called _value but its getters and setters hide this fact.
 
-When a property is assigned to, its setter function is called. If the new value is different from its old value (by using a shallow comparison) then the propertyChangedCallback() is called informing the component that the property has in fact changed.
+When an observed property is assigned to, its setter function is called. If the new value is different from its old value (as determined by a shallow comparison) then a method named propertyChangedCallback() is called to inform the component that an observed property has in fact changed.
 
-The choice of using a shallow comparison rather than a deep one was made for efficiency. As long as the values of properties are treated as [immutable](https://spapas.github.io/2018/04/05/easy-immutable-objects/) and replaced rather that modified, then we can use this computationally in expensive approach to observing properties.
+The decision to use a shallow comparison rather than a deep (recursive) one was made for reasons of efficiency. As long as the values of the properties are treated as though they were [immutable](https://spapas.github.io/2018/04/05/easy-immutable-objects/) and that their values get replaced rather that modified then we can use this lightweight and computationally inexpensive approach to observing changes.
 
-To see observed properties in action create a new component called my-clock.
+To see observed properties in action, let’s create a new component called my-clock.
 
     class MyClock extends HTMLElement {
       
@@ -731,15 +731,13 @@ To see observed properties in action create a new component called my-clock.
 
 [See a working version here (use Chrome)](https://codepen.io/jhlagado/pen/oPrXQP?editors=1101)
 
-In this code the observeProperties method is called in the constructor which goes through and adds getters and setters to each property, in this case only time is an observed property.
+In this code the observeProperties method is called in the constructor which goes through and adds getters and setters to each observed property. In this case only time is an observed property.
 
-When the element is added to the document, the component starts an interval and saves its intervalID for cleanup later if the component is ever removed from the document. The CustomElement life-cycle callback disconnectedCallback() is called whenever a component is removed.
+When the element is added to the document, connectedCallback() is called and the component starts off an interval timer using setInterval(). The component also saves the timer’s intervalID for cleanup later on if the component is ever removed from the document. The CustomElement life-cycle callback disconnectedCallback() is called whenever a component is removed from the document.
 
-In our previous examples, the connectedCallback() method was where we first called the render() method. But now that we have at least one observed property, the render will be called whenever it is changed which is something that happens repeatedly with an interval one second. The render method will be called when the time property is first initialised.
+In our previous examples, connectedCallback() was where we first called the render() method but now that we have at least one observed property, the render will be called whenever it is changed which is something that happens repeatedly with an interval one second. The render method is also called when the time property is first initialised.
 
-Let’s return now to our earlier example of the my-counter component. As I mentioned, each click event handler would need to call the render method if the changes it made were to be reflected. With observed properties, that is no longer needed.
-
-Furthermore, because we can rely on the counter being initialised after we start observing it, we can dispense with the connectedCallback() method altogether.
+Now that we have an easy way to react to changes in properties, let’s return now to our earlier example of the my-counter component with its up and down buttons. You may recall that each click event handler that modified the state of the counter needed to call the render method if the changes made were to be reflected visually. With observed properties, this is no longer necessary.
 
     class MyCounter extends HTMLElement {
       
