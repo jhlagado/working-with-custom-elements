@@ -142,7 +142,7 @@ In the render method we use slot elements to reference these items of passed in 
 
 [See a working version here (use Chrome).](https://codepen.io/jhlagado/pen/WgWJNa?editors=1101)
 
-![A custom element with slots](images/ch2-ce-with-slots.png)
+![A custom element with multiple slots](images/ch2-ce-with-slots.png)
 
 ## Refactoring Custom Elements
 
