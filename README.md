@@ -26,3 +26,4 @@ Because they are registered with the browser itself, Custom Elements do not comp
 
 You can think of Custom Elements as a sort of containerisation for web components. They have been designed to maximise flexibility and code reuse.
 
+You can start reading [here](manuscript/chapter-01.md).
