@@ -97,7 +97,7 @@ When this component gets constructed, it calls its inherited method attachShadow
 
 The resulting HTML in the browser looks a bit different to the previous example
 
-![A custom element with a shadow DOM](images/ch2-ce-no-shadow.png)
+![A custom element with a shadow DOM](images/ch2-ce-with-shadow.png)
 
 The first thing to notice is that the element has a child marked #shadow-root which contains all the DOM that will be rendered. The actual body of the custom element is not rendered directly but it gets referenced by the Shadow DOM using a special tag called slot.
 
