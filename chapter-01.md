@@ -531,6 +531,59 @@ Now let’s us simplify my-comment
 
 ## Handling Events
 
+LitHtml provides is with a way to add event handlers to your markup. Events can be built-in ones such as click and focus or they can be custom events. An event handler is usually a function that is called when the element receives an event of a certain type.
+
+To demonstrate event handling, we’ll create a my-counter component which has three buttons up and down and reset.
+
+    class MyCounter extends HTMLElement {
+      
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'});
+        this.counter = 0; 
+      }
+      
+      connectedCallback() {  
+        this.render();
+      } 
+      
+      upClick() {
+        this.counter++;
+        this.render();
+      }
+      
+      downClick() {
+        this.counter--;
+        this.render();
+      }
+
+    resetClick() {
+        this.counter = 0;
+        this.render();
+      }
+      
+      render() { 
+        render( 
+          html`
+            <h1>Counter:</h1>
+            <h2>${this.counter}</h2>           
+            <div>
+              <button [@click](http://twitter.com/click)=${e => this.upClick()}>up</button>
+              <button [@click](http://twitter.com/click)=${e => this.downClick()}>down</button>           
+              <button [@click](http://twitter.com/click)=${e => this.resetClick()}>reset</button>        
+            </div>
+          `, 
+          this.shadowRoot 
+        );
+      }
+    }
+      
+    customElements.define('my-counter', MyCounter);
+
+[See a working version here (use Chrome)](https://codepen.io/jhlagado/pen/RYzKwm?editors=1101)
+
+One thing you will notice is that every event handler that alters the counter property needs to make a call to render it. We can reduce the need for adding render calls everywhere by observing when things change. We will revisit this example a bit later.
+
 ## Attributes and Properties
 
 While slots are a very useful way to pass markup-based data to Custom Elements, we have two other ways at our disposal: passing values as attribute values through the DOM and setting properties on the DOM elements directly.
@@ -586,8 +639,19 @@ While Custom Elements provide us with a callback when an attribute changes, with
 Let’s just start by talking about this utility function observeProperties() which can help us add observability to properties.
 
     function observeProperties(object, props) {
-
       for (let prop of props) {
+
+        // if the component already has a property of this 
+        // name then save it for later
+
+        const hasProp = object.hasOwnProperty(prop)
+        let initValue; 
+        if (hasProp) {
+          initValue = object[prop];
+          delete object[prop]; 
+        }
+        
+        // define getters and setters for this property name
 
         const key = `_${prop}`;
         Object.defineProperty(object, prop, {
@@ -605,8 +669,14 @@ Let’s just start by talking about this utility function observeProperties() wh
               );
             }
           }
-
         });
+        
+        // if we saved an old property value earlier 
+        // reassign it to the component
+
+        if (hasProp) {
+          object[prop] = initValue;
+        }
       }
     }
 
@@ -624,28 +694,28 @@ To see observed properties in action create a new component called my-clock.
         super();
         this.attachShadow({mode: 'open'});
         observeProperties(this, ['time']);
+        this.updateTime();
       }
       
       connectedCallback() {  
         this.intervalID = setInterval(
           () => this.updateTime(), 
-          1000
+          1000 
         );
-        this.render();
       }
-
+      
       disconnectedCallback() {
         clearInterval(this.intervalID);
       }
-
+      
       updateTime() {
         this.time = new Date().toLocaleTimeString();
       }
-
+      
       propertyChangedCallback(name, value, oldValue) {
         this.render();
       }
-
+      
       render() { 
         render( 
           html`
@@ -665,8 +735,57 @@ In this code the observeProperties method is called in the constructor which goe
 
 When the element is added to the document, the component starts an interval and saves its intervalID for cleanup later if the component is ever removed from the document. The CustomElement life-cycle callback disconnectedCallback() is called whenever a component is removed.
 
-As usual the component is rendered when it is connected but now it will render again every time an observed property is changed which is something that happens repeatedly with an interval one second.
+In our previous examples, the connectedCallback() method was where we first called the render() method. But now that we have at least one observed property, the render will be called whenever it is changed which is something that happens repeatedly with an interval one second. The render method will be called when the time property is first initialised.
 
-## Styling
+Let’s return now to our earlier example of the my-counter component. As I mentioned, each click event handler would need to call the render method if the changes it made were to be reflected. With observed properties, that is no longer needed.
+
+Furthermore, because we can rely on the counter being initialised after we start observing it, we can dispense with the connectedCallback() method altogether.
+
+    class MyCounter extends HTMLElement {
+      
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'});
+        observeProperties(this, ['counter']);  
+        this.counter = 0; 
+      }
+      
+      propertyChangedCallback(name, value, oldValue) { 
+        this.render(); 
+      }
+      
+      upClick() {
+        this.counter++;  
+      }
+      
+      downClick() {
+        this.counter--;
+      }
+
+      resetClick() {
+        this.counter = 0;
+      }
+      
+      render() { 
+        render( 
+          html`
+            <h1>Counter:</h1>
+            <h2>${this.counter}</h2>           
+            <div>
+              <button [@click](http://twitter.com/click)=${e => this.upClick()}>up</button>
+              <button [@click](http://twitter.com/click)=${e => this.downClick()}>down</button>           
+              <button [@click](http://twitter.com/click)=${e => this.resetClick()}>reset</button>        
+            </div>
+          `, 
+          this.shadowRoot 
+        );
+      }
+    }
+      
+    customElements.define('my-counter', MyCounter);
+
+[See a working version here (use Chrome)](https://codepen.io/jhlagado/pen/gdNgKM?editors=1001)
+
+To be Continued…
 
 *PLEASE NOTE: This is still a working draft. Stay tuned for more updates.*
