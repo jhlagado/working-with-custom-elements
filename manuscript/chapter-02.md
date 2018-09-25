@@ -1,4 +1,4 @@
-## Building Custom Elements
+# Chapter 2 - Building Custom Elements
 
 The examples so far have concentrated on selecting some existing DOM element in the HTML page and then replacing its contents with some JavaScript-generated content. This is fine as it goes but what we’re really after is a way to build reusable web components that exist autonomously in the browser. When they appear in the HTML of the page, they become active, know how and when to render themselves and respond to browser events with their own behaviours.
 
