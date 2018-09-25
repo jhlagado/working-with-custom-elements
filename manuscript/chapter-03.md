@@ -1,4 +1,4 @@
-## Handling Events
+# Chapter 3 - Handling Events
 
 LitHtml provides us with a way to add event handlers to your markup. Events can be the built-in ones such as click and focus or they can be custom events. An event handler is a function that is called when the element receives an event of a certain type.
 
