@@ -88,20 +88,20 @@ In these examples we’ll be using a very lightweight library from Google called
 
 Remarkably LitHtml really isn’t any more difficult to use than innerHTML.
 
-    **import {html, render} from 'lit-html';**
+    import {html, render} from 'lit-html';
 
     const greeting = 'Hello';
 
-    const literal = **html**`
+    const literal = html`
       <h1>
         ${greeting}, world!
       </h1>
     `
 
-    **render(
-    **  literal,
+    render(
+      literal,
       document.getElementById('root')
-    **);**
+    );
 
 [See a working version here.](https://codepen.io/jhlagado/pen/jvRbOY)
 
@@ -299,10 +299,10 @@ Let’s now turn to the component’s definition and see how we can use a Shadow
         render( 
           html`
             <h1>
-              **<slot></slot>** world!
+              <slot></slot> world!
             </h1>
           `, 
-          **this.shadowRoot**
+          this.shadowRoot
         );
       }
     }
@@ -481,7 +481,7 @@ Next, we will extract a my-user-info component that renders an my-avatar compone
         render( 
           html`
             <div>
-              **<my-avatar .user=${this.user}></my-avatar> **
+              <my-avatar .user=${this.user}></my-avatar> 
               <div>
                 ${this.user.name}
               </div>
@@ -511,8 +511,8 @@ Now let’s us simplify my-comment
         render( 
           html`
           <div>           
-            **<my-user-info .user=${this.author}></my-user-info>
-    **        <div>
+            <my-user-info .user=${this.author}></my-user-info>
+            <div>
               <slot></slot>
             </div>
             <div>
