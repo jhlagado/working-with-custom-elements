@@ -4,19 +4,19 @@ While slots are a very useful way to pass markup-based data to Custom Elements, 
 
 ## Observing Attributes
 
-HTML attributes are string values that are accessible from JavaScript using the methods hasAttribute(), getAttribute(), setAttribute() and removeAttribute() on the component’s DOM element.
+HTML attributes are string values that are accessible from JavaScript using the methods `hasAttribute`, `getAttribute`, `setAttribute` and `removeAttribute` on the component’s DOM element.
 
-Custom Elements also provide a way to monitor the state of specific attributes and to notify the component with a callback when an attribute changes. To observe one of more attributes we need to add a getter method called observedAttributes() to the component’s class (i.e. a static method). This method needs to return an array of attribute names to monitor.
+Custom Elements also provide a way to monitor the state of specific attributes and to notify the component with a callback when an attribute changes. To observe one of more attributes we need to add a getter method called `observedAttributes` to the component’s class (i.e. a static method). This method needs to return an array of attribute names to monitor.
 
-For example, to monitor the disabled attribute on a custom element
+For example, to monitor the `disabled` attribute on a custom element
 
     static get observedAttributes() {
         return ['disabled'];
     }
 
-Now our component will get notified every time its disabled attribute is changed by being called back via its attributeChangedCallback() which will inform us of the name of the attribute that changed, it’s old value and it’s new value.
+Now our component will get notified every time its disabled attribute is changed by being called back via its `attributeChangedCallback` which will inform us of the name of the attribute that changed, it’s old value and it’s new value.
 
-This is usually enough information but in the case of boolean attributes we might decide to check the value of hasAttribute() as well.
+This is usually enough information but in the case of boolean attributes we might decide to check the value of `hasAttribute` as well.
 
     attributeChangedCallback(name, oldValue, newValue) {
       
@@ -48,9 +48,9 @@ As mentioned earlier, properties can also be assigned via LitHtml by using the d
       <input id="last-name" type="text" .value=${lastName}>
     `;
 
-While Custom Elements provide us with an attributeChangedCallback() when the value of an attribute changes, with properties we are pretty much on our own. That said, JavaScript does already give us some powerful ways of intercepting property accesses with [getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) and [setters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set).
+While Custom Elements provide us with an `attributeChangedCallback` when the value of an attribute changes, with properties we are pretty much on our own. That said, JavaScript does already give us some powerful ways of intercepting property accesses with [getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) and [setters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set).
 
-Take a look at this utility function observeProperties() which will help us add observability to our properties.
+Take a look at this utility function `observeProperties` which will help us add observability to our properties.
 
     function observeProperties(object, props) {
       for (let prop of props) {
@@ -94,13 +94,13 @@ Take a look at this utility function observeProperties() which will help us add 
       }
     }
 
-When you hand this function an element and an array of property names to observe, it iterates through the array creates getters and setters for each property. These properties become in effect “virtual” properties because the public name of the property differs from where it is actually stored. For example, a property with the name value is actually stored in a property called _value but its getters and setters hide this fact.
+When you hand this function an element and an array of property names to observe, it iterates through the array creates getters and setters for each property. These properties become in effect “virtual” properties because the public name of the property differs from where it is actually stored. For example, a property with the name `value` is actually stored in a property called `_value` but its getters and setters hide this fact.
 
-When an observed property is assigned to, its setter function is called. If the new value is different from its old value (as determined by a shallow comparison) then a method named propertyChangedCallback() is called to inform the component that an observed property has in fact changed.
+When an observed property is assigned to, its setter function is called. If the new value is different from its old value (as determined by a shallow comparison) then a method named `propertyChangedCallback` is called to inform the component that an observed property has in fact changed.
 
 The decision to use a shallow comparison rather than a deep (recursive) one was made for reasons of efficiency. As long as the values of the properties are treated as though they were [immutable](https://spapas.github.io/2018/04/05/easy-immutable-objects/) and that their values get replaced rather that modified then we can use this lightweight and computationally inexpensive approach to observing changes.
 
-To see observed properties in action, let’s create a new component called my-clock.
+To see observed properties in action, let’s create a new component called `my-clock`.
 
     class MyClock extends HTMLElement {
       
@@ -145,13 +145,13 @@ To see observed properties in action, let’s create a new component called my-c
 
 [See a working version here (use Chrome)](https://codepen.io/jhlagado/pen/oPrXQP?editors=1101)
 
-In this code the observeProperties method is called in the constructor which goes through and adds getters and setters to each observed property. In this case only time is an observed property.
+In this code the `observeProperties` function is called in the constructor which goes through and adds getters and setters to each observed property. In this case only `time` is an observed property.
 
-When the element is added to the document, connectedCallback() is called and the component starts off an interval timer using setInterval(). The component also saves the timer’s intervalID for cleanup later on if the component is ever removed from the document. The CustomElement life-cycle callback disconnectedCallback() is called whenever a component is removed from the document.
+When the element is added to the document, `connectedCallback` is called and the component starts off an interval timer using `setInterval`. The component also saves the timer’s `intervalID` for cleanup later on if the component is ever removed from the document. The CustomElement life-cycle callback `disconnectedCallback` is called whenever a component is removed from the document.
 
-In our previous examples, connectedCallback() was where we first called the render() method but now that we have at least one observed property, the render will be called whenever it is changed which is something that happens repeatedly with an interval one second. The render method is also called when the time property is first initialised.
+In our previous examples, `connectedCallback` was where we first called the `render` method but now that we have at least one observed property, the render will be called whenever it is changed which is something that happens repeatedly with an interval one second. The `render` method is also called when the `time` property is first initialised.
 
-Now that we have an easy way to react to changes in properties, let’s return now to our earlier example of the my-counter component with its up and down buttons. You may recall that each click event handler that modified the state of the counter needed to call the render method if the changes made were to be reflected visually. With observed properties, this is no longer necessary.
+Now that we have an easy way to react to changes in properties, let’s return now to our earlier example of the `my-counter` component with its `up` and `down` buttons. You may recall that each click event handler that modified the state of the counter needed to call the `render` method if the changes made were to be reflected visually. With observed properties, this is no longer necessary.
 
     class MyCounter extends HTMLElement {
       

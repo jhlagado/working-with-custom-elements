@@ -108,7 +108,7 @@ For example, say we wanted to create an element that formatted a person’s name
 
     <name-card first-name="John" last-name="Hardy"></name-card>
 
-If the name-card tag was registered as a custom element component then the browser could be made to render it as
+If the `name-card` tag was registered as a custom element component then the browser could be made to render it as
 
     <table>
       <tr>

@@ -1,8 +1,8 @@
 # Chapter 3 - Handling Events
 
-LitHtml provides us with a way to add event handlers to your markup. Events can be the built-in ones such as click and focus or they can be custom events. An event handler is a function that is called when the element receives an event of a certain type.
+LitHtml provides us with a way to add event handlers to your markup. Events can be the built-in ones such as `click` and `focus` or they can be custom events. An event handler is a function that is called when the element receives an event of a certain type.
 
-To demonstrate event handling, we’ll create a my-counter component which contains three buttons up and down and reset. These buttons will change the value of a counter property.
+To demonstrate event handling, we’ll create a `my-counter` component which contains three buttons `up`, `down` and `reset`. These buttons will change the value of a counter property.
 
     class MyCounter extends HTMLElement {
       

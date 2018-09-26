@@ -1,6 +1,6 @@
 # Chapter 1 - Working with the DOM
 
-Before we get too deeply into Custom Elements themselves, I’d like to first talk a little about updating the DOM using JavaScript. The browser gives us an entire API for doing this. For example, say we want to attach an h1 element containing the text “Hello, world!” to an element with an id of ”root”.
+Before we get too deeply into Custom Elements themselves, I’d like to first talk a little about updating the DOM using JavaScript. The browser gives us an entire API for doing this. For example, say we want to attach an h1 element containing the text `“Hello, world!”` to an element with an `id` of ”root”.
 
     // create a new h1 element
     const newHeading = document.createElement("h1");
@@ -24,7 +24,7 @@ Running this code will display a heading with the words “Hello, world!” on t
 
     document.getElementById('root').innerHTML = string;
 
-Even better than a conventional JavaScript string is a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) which allows you to express text that can run over multiple lines. Note the use of `back-ticks` rather that ‘single’ or “double” quotes to delimit the template literal.
+Even better than a conventional JavaScript string is a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) which allows you to express text that can run over multiple lines. Note the use of \`back-ticks\` rather that ‘single’ or “double” quotes to delimit the template literal.
 
     const template = `
       <h1>
@@ -48,7 +48,7 @@ Template literals evaluate as conventional strings but they have the additional 
 
 [See a working version here.](https://codepen.io/jhlagado/pen/oPOGeQ?editors=1100)
 
-So working with the innerHtml property and template literals is great but unfortunately any solution employing innerHTML doesn’t actually scale very well. The innerHTML property is inefficient for working with large amounts of HTML and it is destructive because it completely replaces the contents of the DOM element every time it gets assigned to. Worse, if there were any event listeners attached to child elements they might too get lost.
+So working with the `innerHtml` property and template literals is great but unfortunately any solution employing `innerHTML` doesn’t actually scale very well. The `innerHTML` property is inefficient for working with large amounts of HTML and it is destructive because it completely replaces the contents of the DOM element every time it gets assigned to. Worse, if there were any event listeners attached to child elements they might too get lost.
 
 Imagine for a second that we had a way to update the DOM that wasn’t so destructive. *What if we had a way to only update the parts that actually changed?* This is usually the point in most discussions on DOM manipulation where [Virtual DOMs](https://www.codecademy.com/articles/react-virtual-dom) are raised as an efficient way to update the browser DOM. While this is certainly true and a good idea (and forms the main justification of many frameworks, React, Vue etc.), this solution doesn’t come without its own costs in terms of memory and computation. Virtual DOMs are certainly powerful and useful but they aren’t the *only* solution to this problem of efficiently updating the DOM.
 
@@ -75,13 +75,13 @@ Remarkably LitHtml really isn’t any more difficult to use than innerHTML.
 
 [See a working version here.](https://codepen.io/jhlagado/pen/jvRbOY)
 
-This code imports two functions from the lit-html module: html and render. The html function is used to “tag” its associated template literal and make it usable by the render function. The render function takes this literal and uses it to replace the content of the DOM element which was specified in the second argument.
+This code imports two functions from the lit-html module: `html` and `render`. The `html` function is used to “tag” its associated template literal and make it usable by the `render` function. The `render` function takes this literal and uses it to replace the content of the DOM element which was specified in the second argument.
 
-The main difference here to using innerHTML is that if nothing changes, no work gets done. For example, if the value of the greeting variable has not been altered, then even multiple calls to the render function will not change the DOM. If the greeting variable does change then only the parts of the DOM that are affected by it will be altered.
+The main difference here to using `innerHTML` is that if nothing changes, no work gets done. For example, if the value of the greeting variable has not been altered, then even multiple calls to the render function will not change the DOM. If the greeting variable does change then only the parts of the DOM that are affected by it will be altered.
 
-This gives us all the benefits of clarity and declarative style of using innerHTML but without the destructiveness and inefficiency that normally comes with it. We can achieve everything we need and we can do it without bringing in the overhead of a Virtual DOM system.
+This gives us all the benefits of clarity and declarative style of using `innerHTML` but without the destructiveness and inefficiency that normally comes with it. We can achieve everything we need and we can do it without bringing in the overhead of a Virtual DOM system.
 
-To demonstrate the last point, let’s look at an example that calls render function multiple times. For the sake of brevity, I’ll leave out the import statement from the previous example.
+To demonstrate the last point, let’s look at an example that calls `render` function multiple times. For the sake of brevity, I’ll leave out the `import` statement from the previous example.
 
 To show that the render function is being called multiple times, let’s add a timestamp.
 
@@ -102,15 +102,15 @@ To show that the render function is being called multiple times, let’s add a t
 
 [See a working version here](https://codepen.io/jhlagado/pen/BOEwZN?editors=1100).
 
-You can see that only the DOM associated with the expression ${new Date().toLocaleTimeString()} is being updated.
+You can see that only the DOM associated with the expression `${new Date().toLocaleTimeString()}` is being updated.
 
 ![We only update the parts of the DOM that need changing](images/ch1-dom-changes.gif)
 
 ## Expressions in Literals
 
-The dollar brace ${} syntax allows you to put any valid [JavaScript expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#Expressions) inside a template literal. For example, 2 + 3, user.firstName, or formatName(user) are all valid JavaScript expressions which can be used for [expression interpolation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Expression_interpolation).
+The dollar brace ${} syntax allows you to put any valid [JavaScript expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#Expressions) inside a template literal. For example, `2 + 3`, `user.firstName`, or `formatName(user)` are all valid JavaScript expressions which can be used for [expression interpolation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Expression_interpolation).
 
-In the example below, we embed the result of calling a JavaScript function, formatName(user) into an h1 element.
+In the example below, we embed the result of calling a JavaScript function, `formatName(user)` into an `h1` element.
 
     function formatName(user) {
       return user.firstName + ' ' + user.lastName;
@@ -161,7 +161,7 @@ You can also use dollar brace syntax to embed JavaScript expressions inside HTML
 
     const literal = html`<img src=${user.avatarUrl}>`;
 
-If the attribute is a **boolean attribute**, for example the disabled attribute on a button element, LitHtml has a special syntax to allow you to assign from a JavaScript boolean expression. The ? attribute prefix enforces the following behaviour: if the expression is true then the attribute gets added to the element, if the expression is false then the attribute gets removed.
+If the attribute is a **boolean attribute**, for example the `disabled` attribute on a button element, LitHtml has a special syntax to allow you to assign from a JavaScript boolean expression. The ? attribute prefix enforces the following behaviour: if the expression is true then the attribute gets added to the element, if the expression is false then the attribute gets removed.
 
     const literal = html`<input type="checkbox" ?checked=${checked}>`
 
@@ -169,7 +169,7 @@ LitHtml enables you to assign expressions not only to attributes but also **prop
 
     const literal = html`<input .value=${value}>`;
 
-LitHtml also allows you to attach error handlers using yet another attribute prefix. The @ attribute prefix attaches a function expression as an event handler. The type of the event (e.g. click) is the name of the event handler attribute.
+LitHtml also allows you to attach error handlers using yet another attribute prefix. The @ attribute prefix attaches a function expression as an event handler. The type of the event (e.g. `click`) is the name of the event handler attribute.
 
     const literal = html`
       <button @click=${(e) => console.log('clicked')}>
