@@ -1,7 +1,7 @@
 
-## Working with Custom Elements
-
 ![Book Cover](manuscript/images/title_page.jpg)
+
+## Working with Custom Elements
 
 [Custom Elements](https://html.spec.whatwg.org/dev/custom-elements.html) are a feature of modern browsers which allow you to modularise and install your JavaScript components into the browser itself in order to extend it in new and powerful ways. Custom Elements are HTML components which have their own self-contained markup, styling and behaviour.
 
