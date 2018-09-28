@@ -15,7 +15,9 @@ Before we get too deeply into Custom Elements themselves, I’d like to first ta
     const root = document.getElementById('root');
 
     // replace the content of the root element the new heading 
-    root.innerHTML = '';
+    while (root.firstChild) {
+      root.removeChild(root.firstChild);
+    }
     root.appendChild(newHeading);
 
 Running this code will display a heading with the words “Hello, world!” on the page but, to be frank, this does seem like an awful lot of work for such a simple task! A more straightforward and declarative way of doing the same thing would be to construct a string containing your markup and replace the root element’s content by assigning the string to the [innerHTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) property.
