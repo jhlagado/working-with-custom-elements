@@ -19,7 +19,7 @@ Consider what the development landscape of ten years ago looked like. Back then 
 
 Since then, browsers have improved dramatically and more importantly have converged upon a [single living standard](https://html.spec.whatwg.org/dev/). Internet Explorer remains a bit of an outlier with regard to web standards but it is important to note that 
 
-1) Internet Explorer 11 at least is not a terrible browser and can be polyfilled and transpiled for 
+1) Internet Explorer 11 is not a terrible browser and can be polyfilled and transpiled for in order to address most of its deficiencies.
 
 2) worldwide usage of all versions of Internet Explorer on the desktop have plummeted in recent years to less that 10% of all users. Usage continues to drop significantly every year.
 
@@ -38,9 +38,9 @@ A timeline of the significant events in frontend development history actually st
 * 2004 Google GMail limited beta
 * 2004 Firefox released
 * 2005 [Jesse James Garrett coins the term “AJAX”](http://adaptivepath.org/ideas/ajax-new-approach-web-applications/) 
-* 2007 GitHub adopts jQuery
+* 2007 jQuery released
 * 2008 Google releases the Chrome browser
-* 2010 Angular JS released
+* 2010 Angular released
 * 2011 React released
 * 2013 Custom Elements v0 
 * 2014 Vue.js released 
@@ -50,43 +50,61 @@ A timeline of the significant events in frontend development history actually st
 * 2016 Angular 2 released
 * 2018 React dominates
 
-Looking back, I might argue that frontend development passed through three epoch which defined the way we did things. Each epoch while only loosely defined is best exemplified by looking at the influence on developer practice of the most dominant library or framework of that era.
+Looking back, I might argue that frontend development passed through three vaguely defined epoch which defined the way we did things. Each epoch is best exemplified by looking at the influence on developer practice of the most dominant library or framework of that era.
 
-### The jQuery era
+### The "jQuery" era (2007 - 2010)
 
-This era was when JavaScript started to be looked upon as a viable language for development. Thanks to the popularising and educational work of Douglas Crockford and others, JavaScript stopped being viewed as some kind of toy language and a variant of Java and began to be seen as as a language with first class functions and closures. 
+This era was when JavaScript started to be looked upon as a viable language for development. Thanks to the popularising and educational work of Douglas Crockford and others, JavaScript stopped being viewed as some kind of toy language or as a variant of Java and began to be seen as as a powerful and expressive language which had first class functions and closures. 
 
-This was also the time when much work was put into overcoming browser differences and establishing new norms which would later go on to become web standards. The biggest incompatibilities that needed ironing out were in the areas of Cascading Style Sheets and Document Object Model.
+This was also the time when a lot of work was being put into overcoming browser differences and establishing new norms which would later go on to become web standards. The biggest incompatibilities that needed ironing out were in the areas of Cascading Style Sheets and the Document Object Model.
 
-This was, of course, when JQuery, an awesome library written by John Resig, helped programmers achieve finer-grained control of the DOM than ever before and to allow them to add dynamism to every page. People talked about the possibility of "graceful degradation" of software and accessible and "unobtrusive JavaScript".
+This was, of course, when JQuery helped programmers to more easily achieve fine-grained control over the DOM and to enable them to add dynamism to every page. 
 
-This sparked the JavaScript revolution.
+This sparked a JavaScript revolution. 
 
-### The Angular JS era
+### The "Angular" era (2011 - 2015)
 
-* declarative interfaces using templates and directives
-* data binding of the state to the view
-* MVC app structure
-* app routing
-* testing framework
-* transformative
+While jQuery and similar libraries helped make the browser more accessible and programmable, by 2010 developers started thinking of the browser a programmable application platform. JavaScript was no longer seen merely as an augmentation script for pages delivered by the server. Now the frontend could be seen as an independent system from the backend, a new client/server architecture was developed and named the "single page app" architecture.  
 
-### The React era (present)
+Key to this new way of doing things was to bring the Model-View-Controller approach that was already common in desktop applications and server-side web application frameworks to the frontend. 
 
-* functional representation UI = f(state)
-* virtual DOM as an optimisation
-* unidirectional data flow
-* “dumb” components
-* state management (Flux, Redux, MobX etc)
+Angular slowly emerged during this period and went on to dominate the way web applications were built. What it brought to developers was a declarative way to define the "view" of the application. In Angular, the view could be made of programmable elements called directives (later called components) which could be bound to the model. The controller of the page also had access to this model and could manipulate it but what made Angular's approach novel was that the controller never directly manipulated the view. The view could only be changed by changes in the model. 
 
-Meanwhile, the browser platform itself has also matured
+The arrival of Angular transformative. Single page apps could use URLs to display different sections of the app without causing a browser refresh. There was no longer any expectation for the backend server to serve HTML. JSON was now the major payload.  
 
-* promises — functional way to deal with asynchronicity
-* fetch — ability to load resources without changing the URL
-* querySelector — ability to select elements using CSS selection rules
+Angular SPAs became dominant but there were less desirable aspects to it. In allowing the model to affect the view, the Angular architecture also allowed the view to affect the model. This is called two-way binding, a cool feature in little apps but one that quickly causes complexity to rise in more complex applications. 
+
+Another problem with Angular, also only apparent at scale, Angular developed performance problems when the number of bindings between model and view increased. Without very special handling, as the number of items to displayed in a view grew (such as with the rows of a table, for example), the amount of computation needs to keep these things in sync. This quickly caused performance to get bogged down, especially on Internet Explorer.
+
+### The "React" era (2016 - )
+
+The solution to these issues for the Angular team was to abandon its own framework and start writing a new one! This eventually led to Angular 2 but it also created an opportunity for other frameworks to come to the fore. Chief amongst those is React.
+
+React at least superficially bears some similarity to Angular in the sense that it has a declarative way of defining the user interface. It has a model to view binding too but this is where the similarity ends. 
+
+React embraces a functional representation of the view which means that the representation of the view is the result of a function where the function takes the application model as its argument. 
+
+    UI = f(model)
+
+If this was all there was to it then then would be a terribly inefficient model because every time the model changed, the end view would need to be reconstructed. In reality, React doesn't reconstruct the entire DOM on every call of a render function. Instead it builds a model of the DOM in memory and when the the model changes it updates this model. It then calculates the difference and from there the smallest number of DOM manipulations that would be required to update the DOM to match the model. This "Virtual DOM" rendering system has proven itself to have been wonderfully successful and has gone on to inspire many other frameworks that also use the Virtual DOM technique.
+
+One of the implications of the view being a function of the model is that this relationship necessarily runs one way. The render function is a pure function and the textbook definition of functional purity is that the function is not permitted to mutate or change its arguments. React apps therefore do not have Angular's two-way binding but as mentioned above, this is actually a good thing. Two-way binding causes more problems than it solves. Because there are multiple sources of change two-way binding can lead to indeterminacy and great difficulty in testing. React apps are more explicit about their relationship to the model and changes to the view that as a consequence of user interaction always come as user events. 
+
+Another consequence of this functional approach to the UI is that components tend to be simpler than their Angular counterparts. While Angular components are often "smart" i.e. have lots of connections and dependencies that enable them to contain a lot of functionality and local state, React components in practice usually have less local state and tend to restrict themselves to presentation and user interaction. These "dumb"-er components communicate via user events up to the containing components. Business logic tends to be handled at that level rather than at the component level. The separation of business logic and presentation logic is one of the innovations of the React architecture.
+
+## The Browser Platform
+
+Meanwhile, during these three "epochs", the browser itself has matured significantly as a platform. Where there once was great variation and incompatibility, now the browsers have converged and have become much more compatible. At the same time the browser has become more powerful as a programming platform.
+
+Under the web standards process, browsers have taken on a bigger API and functionality. Now included in the browser platform are 
+
+* promises — a functional way to deal with asynchronicity. Promises are more powerful than callbacks because they can composed and can handle error conditions in a much less complicated way.
+* fetch — a promise-based way to load resources from the backend. 
+* querySelector — ability to select elements using CSS selection rules. querySelector and querySelectorAll operate in a similar way to the jQuery selection operations.
+* CSS transitions and animations
 * history API — change URL without navigating the browser
 * web workers
-* local storage
+* local storage and indexeddb
 * service workers
 * custom elements — extending the DOM with components
 
