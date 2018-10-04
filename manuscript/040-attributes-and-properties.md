@@ -184,9 +184,12 @@ Now that we have an easy way to react to changes in properties, let’s return n
             <h1>Counter:</h1>
             <h2>${this.counter}</h2>           
             <div>
-              <button @click=${e => this.upClick()}>up</button>
-              <button @click=${e => this.downClick()}>down</button>           
-              <button @click=${e => this.resetClick()}>reset</button>        
+              <button @click=${
+                e => this.upClick()}>up</button>
+              <button @click=${
+                e => this.downClick()}>down</button>
+              <button @click=${
+                e => this.resetClick()}>reset</button>
             </div>
           `, 
           this.shadowRoot 

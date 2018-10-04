@@ -1,4 +1,34 @@
-# Chapter 2 - Building Custom Elements
+# Introduction
+## What are Custom Elements?
+
+[Custom Elements](https://html.spec.whatwg.org/dev/custom-elements.html) are a feature of modern browsers which allow you to extend their capabilities by installing new tags into their HTML markup vocabulary.
+
+For example you could add your own custom button types, drop-down lists and other reusable components and use them just the same way as the built in ones. You can add your own functionality and behaviours to this custom elements, you can add new events to notify your application code of changes and you have powerful ways of styling them.
+
+For example, say we wanted to create an element that formatted a person’s name
+
+    <name-card first-name="John" last-name="Hardy"></name-card>
+
+If the `name-card` tag was registered as a custom element component then the browser could be made to render it as
+
+    <table>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+      </tr>
+      <tr>
+        <td>John</td>
+        <td>Hardy</td>
+      <tr>
+    </table>
+
+Custom Elements are useful for defining reusable components and widgets but they are expressive enough that they could even be used to control application logic and entire web pages. Because they are registered with the browser itself, Custom Elements do not compete with existing libraries and frameworks. In fact they can be used to facilitate greater interoperability and code sharing between them. 
+
+A custom element designed for, say, an Angular application could easily be reused in a React application. The work that went into developing the component in one framework could be reused without modification in another. This enables a far greater flexibility in web development than we are used to. In fact Custom Elements helps defeat the general tendency of framework lock-in on the front-end web development.
+
+You can think of Custom Elements as a sort of containerisation for web components. They have been designed to maximise flexibility and code reuse.
+
+## Building Custom Elements
 
 The examples so far have concentrated on selecting some existing DOM element in the HTML page and then replacing its contents with some JavaScript-generated content. This is fine as it goes but what we’re really after is a way to build reusable web components that exist autonomously in the browser. When they appear in the HTML of the page, they become active, know how and when to render themselves and respond to browser events with their own behaviours.
 
@@ -21,10 +51,7 @@ The basic definition of a custom element looks like this.
       } 
       
       render() { // 5
-        render( 
-          html`<h1>Hello, world!</h1>`, 
-          this
-        );
+        this.innerHTML = `<h1>Hello, world!</h1>`;
       }
     }
 
@@ -44,7 +71,7 @@ Note: unlike React components the render() method has no special meaning. Decidi
 
 The resulting HTML in the browser looks like this.
 
-![A custom element with no shadow DOM](images/ch2-ce-no-shadow.png)
+![A custom element with no shadow DOM](images/000-ce-no-shadow.png)
 
 While this is already pretty good, it has the downside of the custom element replacing its own body content. This makes it difficult to pass additional information in the body of the custom element.
 
@@ -78,14 +105,11 @@ Let’s now turn to the component’s definition and see how we can use a Shadow
       } 
       
       render() { 
-        render( 
-          html`
-            <h1>
-              <slot></slot> world!
-            </h1>
-          `, 
-          this.shadowRoot
-        );
+        this.shadowRoot.innerHTML = `
+          <h1>
+            <slot></slot> world!
+          </h1>
+        `;
       }
     }
       
@@ -97,7 +121,7 @@ When this component gets constructed, it calls its inherited method `attachShado
 
 The resulting HTML in the browser looks a bit different to the previous example
 
-![A custom element with a shadow DOM](images/ch2-ce-with-shadow.png)
+![A custom element with a shadow DOM](images/000-ce-with-shadow.png)
 
 The first thing to notice is that the element has a child marked #shadow-root which contains all the DOM that will be rendered. The actual body of the custom element is not rendered directly but it gets referenced by the Shadow DOM using a special tag called `slot`.
 
@@ -125,16 +149,13 @@ In the render method we use slot elements to reference these items of passed in 
       } 
       
       render() { 
-        render( 
-          html`
+        this.shadowRoot.innerHTML = `
           <h1>
             <slot></slot> 
             <slot name="first-name"></slot> 
             <slot name="last-name"></slot> 
           </h1>
-          `, 
-          this.shadowRoot
-        );
+        `;
       }
     }
       
@@ -142,172 +163,4 @@ In the render method we use slot elements to reference these items of passed in 
 
 [See a working version here (use Chrome).](https://codepen.io/jhlagado/pen/WgWJNa?editors=1101)
 
-![A custom element with multiple slots](images/ch2-ce-with-slots.png)
-
-## Refactoring Custom Elements
-
-As the complexity of a custom element grows, the amount of HTML to be rendered also tends to increase. This in turn makes our code longer and harder to read and maintain. It may come to a point where it makes sense to decompose our component into smaller components. Decomposition can aid us by improving readability and code reusability.
-
-For example, consider this `my-comment` component which could be used to represent a comment on a blog or social media site.
-
-    class MyComment extends HTMLElement {
-      
-      constructor() { 
-        super();
-        this.attachShadow({mode: 'open'});
-      }
-      
-      connectedCallback() {  
-        this.render();
-      } 
-      
-      render() { 
-        render( 
-          html`
-          <div>
-            <div>
-              <img className="Avatar"
-                src=${this.author.avatar}
-                alt=${this.author.name}
-              >
-              <div>
-                ${this.author.name}
-              </div>
-            </div>
-            <div>
-              <slot></slot>
-            </div>
-            <div>
-              ${this.date}
-            </div>
-          </div>
-          `, 
-          this.shadowRoot 
-        );
-      }
-    }
-      
-    customElements.define('my-comment', MyComment);
-
-which we will render directly using LitHtml
-
-    const author = {
-      name: 'John Hardy',
-      avatar: '[https://bit.ly/2OHRT9v](https://bit.ly/2OHRT9v)'
-    };
-
-    const date = new Date();
-    const text = html`
-        <p>
-          Hello, this is my comment.
-        </p>
-    `;
-      
-    const literal = html`
-      <my-comment .author=${author} .date=${date}>
-        ${text}
-      </my-comment>
-    `;
-
-    render(
-      literal,
-      document.getElementById('root')
-    );
-
-[See a working version here (use Chrome)](https://codepen.io/jhlagado/pen/QVPxqK?editors=1101)
-
-You can see that the render method of the custom element is rather long and hard to read. We can do better by decomposing this unwieldy structure into smaller and more reusable components.
-
-Let’s start by extracting the `my-avatar` component
-
-    class MyAvatar extends HTMLElement {
-      
-      constructor() { 
-        super();
-      }
-      
-      connectedCallback() {  
-        this.render();
-      } 
-      
-      render() { 
-        render( 
-          html`
-            <img 
-              src=${this.user.avatar}
-              alt=${this.user.name}
-            >
-          `, 
-          this
-        );
-      }
-    }
-      
-    customElements.define('my-avatar', MyAvatar);
-
-`my-avatar` doesn’t need to know that it is being rendered inside a `my-comment` component. In fact the less it knows about the surrounding context in which it is used the better.
-
-Next, we will extract a `my-user-info` component that renders an `my-avatar` component next to the user’s name
-
-    class MyUserInfo extends HTMLElement {
-      
-      constructor() { 
-        super();
-      }
-      
-      connectedCallback() {  
-        this.render();
-      } 
-      
-      render() { 
-        render( 
-          html`
-            <div>
-              <my-avatar .user=${this.user}></my-avatar> 
-              <div>
-                ${this.user.name}
-              </div>
-            </div>
-          `, 
-          this
-        );
-      }
-    }
-      
-    customElements.define('my-user-info', MyUserInfo);
-
-Now let’s us simplify `my-comment`
-
-    class MyComment extends HTMLElement {
-      
-      constructor() { 
-        super();
-        this.attachShadow({mode: 'open'});
-      }
-      
-      connectedCallback() {  
-        this.render();
-      } 
-      
-      render() { 
-        render( 
-          html`
-          <div>           
-            <my-user-info .user=${this.author}></my-user-info>
-            <div>
-              <slot></slot>
-            </div>
-            <div>
-              ${date}
-            </div>
-          </div>
-          `, 
-          this.shadowRoot
-        );
-      }
-    }
-      
-    customElements.define('my-comment', MyComment);
-
-[See a working version here (use Chrome)](https://codepen.io/jhlagado/pen/LJvBjY?editors=1101)
-
+![A custom element with multiple slots](images/000-ce-with-slots.png)

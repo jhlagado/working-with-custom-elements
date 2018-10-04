@@ -22,7 +22,7 @@ If the name-card tag was registered as a custom element component then the brows
       <tr>
     </table>
 
-Custom Elements are useful for defining reusable components such as buttons and dropdown menus but they are expressive enough that they could even constitute entire web pages.
+Custom Elements are useful for defining reusable components such as buttons and drop-down menus but they are expressive enough that they could even constitute entire web pages.
 
 Because they are registered with the browser itself, Custom Elements do not compete with existing libraries and frameworks. In fact they can be used to facilitate greater interoperability and code sharing between them. A custom element designed for, say, an Angular application could be reused in a React application. The work that went into developing the component in one framework could be reused without modification in another. This enables flexibility in web development and it also helps defeat the general tendency towards vendor and framework lock-in on the front-end.
 

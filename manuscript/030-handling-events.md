@@ -37,9 +37,12 @@ To demonstrate event handling, we’ll create a `my-counter` component which con
             <h1>Counter:</h1>
             <h2>${this.counter}</h2>           
             <div>
-              <button @click=${e => this.upClick()}>up</button>
-              <button @click=${e => this.downClick()}>down</button>           
-              <button @click=${e => this.resetClick()}>reset</button>        
+              <button @click=${
+                e => this.upClick()}>up</button>
+              <button @click=${
+                e => this.downClick()}>down</button>
+              <button @click=${
+                e => this.resetClick()}>reset</button>
             </div>
           `, 
           this.shadowRoot 
