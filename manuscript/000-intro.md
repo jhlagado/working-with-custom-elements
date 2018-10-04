@@ -26,7 +26,7 @@ Custom Elements are useful for defining reusable components and widgets but they
 
 A custom element designed for, say, an Angular application could easily be reused in a React application. The work that went into developing the component in one framework could be reused without modification in another. This enables a far greater flexibility in web development than we are used to. In fact Custom Elements helps defeat the general tendency of framework lock-in on the front-end web development.
 
-You can think of Custom Elements as a sort of containerisation for web components. They have been designed to maximise flexibility and code reuse.
+You can think of Custom Elements as a sort of containerisation for web components. They have been designed to maximize flexibility and code reuse.
 
 ## Building Custom Elements
 

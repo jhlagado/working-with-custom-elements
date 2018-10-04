@@ -149,7 +149,7 @@ In this code the `observeProperties` function is called in the constructor which
 
 When the element is added to the document, `connectedCallback` is called and the component starts off an interval timer using `setInterval`. The component also saves the timer’s `intervalID` for cleanup later on if the component is ever removed from the document. The CustomElement life-cycle callback `disconnectedCallback` is called whenever a component is removed from the document.
 
-In our previous examples, `connectedCallback` was where we first called the `render` method but now that we have at least one observed property, the render will be called whenever it is changed which is something that happens repeatedly with an interval one second. The `render` method is also called when the `time` property is first initialised.
+In our previous examples, `connectedCallback` was where we first called the `render` method but now that we have at least one observed property, the render will be called whenever it is changed which is something that happens repeatedly with an interval one second. The `render` method is also called when the `time` property is first initialized.
 
 Now that we have an easy way to react to changes in properties, let’s return now to our earlier example of the `my-counter` component with its `up` and `down` buttons. You may recall that each click event handler that modified the state of the counter needed to call the `render` method if the changes made were to be reflected visually. With observed properties, this is no longer necessary.
 
@@ -201,6 +201,3 @@ Now that we have an easy way to react to changes in properties, let’s return n
 
 [See a working version here (use Chrome)](https://codepen.io/jhlagado/pen/gdNgKM?editors=1001)
 
-To be Continued…
-
-*PLEASE NOTE: This is still a working draft. Stay tuned for more updates.*
