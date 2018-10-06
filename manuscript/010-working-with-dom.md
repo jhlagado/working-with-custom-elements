@@ -1,24 +1,95 @@
-# Chapter 1 - Working with the DOM
+# Working with the DOM
 
-Before we get too deeply into Custom Elements themselves, I’d like to first talk a little about updating the DOM using JavaScript. The browser gives us an entire API for doing this. For example, say we want to attach an h1 element containing the text `“Hello, world!”` to an element with an `id` of ”root”.
+As mentioned earlier, while setting the `innerHTML` of an element is convenient, it is also very inefficient. For one thing, setting the `innerHTML` is a very **slow** way to manipulate the DOM. It is also very **destructive** as it completely replaces the HTML content of an element instead of mutating the elements that may already be there. This destructiveness may also cause problems, especially if event listeners have been attached to any of those child elements. 
 
-    // create a new h1 element
-    const newHeading = document.createElement("h1");
+So let's work around some of those issues by using innerHTML in a more targeted way. In the following example, we'll create a stopwatch component which calls the `doTick` method every 100th of a second. The stopwatch will has two buttons: `toggle` and `reset`, the first toggles between starting and stopping the stopwatch. The other resets the stopwatch back to zero and stops the counting. These methods are added as event listeners of the `toggle` and `reset` buttons respectively. 
 
-    // and give it some content 
-    const newContent = document.createTextNode("Hello, world!");
+    class MyStopwatch extends HTMLElement {
 
-    // add the text node to the newly created h1
-    newHeading.appendChild(newContent);
+      constructor() { 
+        super();
+        this.attachShadow({mode: 'open'});
+        this.active = true;
+        this.counter = 0; 
+        this.doToggle = this.doToggle.bind(this);
+        this.doReset = this.doReset.bind(this);
 
-    // add the newly created element and its content into the DOM 
-    const root = document.getElementById('root');
+        this.shadowRoot.innerHTML = `
+          <h1><slot></slot></h1>
+          <h2></h2>
+          <button id="toggle"></button>
+          <button id="reset">Reset</button>
+        `;
+      }
 
-    // replace the content of the root element the new heading 
-    while (root.firstChild) {
-      root.removeChild(root.firstChild);
+      connectedCallback() {  
+        const root = this.shadowRoot;
+        const toggle = root.querySelector('#toggle');
+        toggle.addEventListener('click', this.doToggle); 
+        const reset = root.querySelector('#reset');
+        reset.addEventListener('click', this.doReset);
+
+        this.timerID = setInterval(() => this.doTick(), 10);
+      }
+
+      disconnectedCallback() {  
+        const toggle = root.querySelector('#toggle');
+
+        const root = this.shadowRoot;
+        toggle.removeEventListener('click', this.doToggle); 
+        const reset = root.querySelector('#reset');
+        reset.removeEventListener('click', this.doReset);
+        cancelInterval(this.timerID);
+      }
+      
+      tickRender() {
+        const root = this.shadowRoot;
+        const h2 = root.querySelector('h2'); 
+        h2.innerHTML = this.counter; 
+        const toggle = root.querySelector('#toggle');
+        toggle.innerHTML = this.active ? 'Stop' : 'Start';
+      }
+
+      doTick() {
+        if (this.active) this.counter++;
+        this.tickRender();
+      }
+
+      doToggle() {
+        this.active = !this.active;
+        const toggle = this.shadowRoot.querySelector('#toggle');
+      }
+
+      doReset() {
+        this.active = false;
+        this.counter = 0; 
+      }
     }
-    root.appendChild(newHeading);
+
+    customElements.define('my-stopwatch', MyStopwatch);  
+
+[See a working version here.](https://codepen.io/jhlagado/pen/oaxMdN?editors=1101)
+
+The component separates the rendering into two parts, the `firstRender` method is called when the component is first added to the document and it lays out most of the component's markup. The `tickRender` method is called by `doTick` and updates the parts of markup that need to change.
+
+The component keeps track of two variables: `active` and `counter`. Toggling the active state determines whether the `counter` variable gets incremented or not. There are two methods that affect these variables: `doToggle` and `doReset`, the first toggles the active state and the second sets the active state to false and sets the counter to zero. 
+
+You may notice also that these listener methods get bound to `this`, i.e. the stopwatch component. This ensures that these methods can access component's properties. It also means that these methods can be removed as event listeners later when the element is removed from the document via the `disconnectedCallback` life-cycle callback.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
 
 Running this code will display a heading with the words “Hello, world!” on the page but, to be frank, this does seem like an awful lot of work for such a simple task! A more straightforward and declarative way of doing the same thing would be to construct a string containing your markup and replace the root element’s content by assigning the string to the [innerHTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) property.
 
